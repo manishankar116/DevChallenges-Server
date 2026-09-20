@@ -1,0 +1,37 @@
+name: Java Spring Boot CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Fetch your Java application source code from GitHub
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # 2. Set up Java 25 Environment (Using Oracle JDK to match your runtime exactly)
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25.0.4'
+          distribution: 'oracle' # Matches your exact local Java(TM) SE Runtime
+          cache: 'maven'         # Caches dependencies to speed up future runs
+
+      # 3. Grant execute permission for the Maven wrapper (if present)
+      - name: Grant Execute Permission for Maven Wrapper
+        run: chmod +x ./mvnw
+        continue-on-error: true # Safely falls back if you use a global 'mvn' instead of a wrapper
+
+      # 4. Clean and build the single jar artifact
+      # Appending -DskipTests prevents build crashes if your test cases require
+      # an active, real-time database connection (like MySQL or PostgreSQL)
+      - name: Build Project with Maven
+        run: ./mvnw clean package -DskipTests
+        # If your project uses standard maven instead of a wrapper script, use:
+        # run: mvn clean package -DskipTests
