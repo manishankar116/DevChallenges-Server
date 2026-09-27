@@ -86,10 +86,10 @@ public class ChallengeService {
     }
 
     @Transactional
-    public ChallengeResponse updateChallenge(UUID id, ChallengeRequest request) {
+    public ChallengeResponse updateChallenge(ChallengeRequest request, AuthenticatedUser authenticatedUser) {
             // 1. Fetch existing challenge using the ID from the URL path
-        Challenge challenge = challengeRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Challenge not found with id: " + id));
+        Challenge challenge = challengeRepository.findById(request.challengeId())
+                .orElseThrow(() -> new NoSuchElementException("Challenge not found with id: " + request.challengeId()));
 
         // 2. Map incoming partial updates (PATCH) using record accessor syntax
         if (request.title() != null) challenge.setTitle(request.title());

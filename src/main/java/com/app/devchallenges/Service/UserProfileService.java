@@ -6,11 +6,13 @@ import com.app.devchallenges.Entity.User;
 import com.app.devchallenges.Entity.UserProfile;
 import com.app.devchallenges.Repository.UserProfileRepository;
 import com.app.devchallenges.Repository.UserRepository;
+import com.app.devchallenges.Security.AuthenticatedUser;
 import org.hibernate.annotations.NotFound;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -24,8 +26,8 @@ public class UserProfileService {
         this.userRepository = userRepository;
     }
 
-    public UserProfileResponse updateUserProfileById(UUID profileId, UserProfileRequest userProfileDTO) {
-        UserProfile existingProfile = userProfileRepository.findById(profileId)
+    public UserProfileResponse updateUserProfileById(UserProfileRequest userProfileDTO, AuthenticatedUser authenticatedUser) {
+        UserProfile existingProfile = userProfileRepository.findByUser_Username(authenticatedUser.getUsername())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         if(userProfileDTO.headline() != null){
@@ -50,8 +52,9 @@ public class UserProfileService {
         UserProfile updatedProfile = userProfileRepository.save(existingProfile);
 
         return new UserProfileResponse(
-                "fullname(restricted)",
-                "username(restricted)",
+                existingProfile.getUser().getFullName(),
+                existingProfile.getUser().getUsername(),
+                existingProfile.getUser().getEmail(),
                 updatedProfile.getProfileId(),
                 updatedProfile.getHeadline(),
                 updatedProfile.getBio(),
@@ -70,6 +73,7 @@ public class UserProfileService {
         return new UserProfileResponse(
                 user.getFullName(),
                 user.getUsername(),
+                user.getEmail(),
                 userProfile.getProfileId(),
                 userProfile.getHeadline(),
                 userProfile.getBio(),
@@ -90,6 +94,7 @@ public class UserProfileService {
         return new UserProfileResponse(
                 user.getFullName(),
                 user.getUsername(),
+                user.getEmail(),
                 userProfile.getProfileId(),
                 userProfile.getHeadline(),
                 userProfile.getBio(),
@@ -107,13 +112,20 @@ public class UserProfileService {
         return true;
     }
 
-    public UserProfileResponse getProfileByUsername(String username) {
+    public UserProfileResponse getProfileByUsername(String username, AuthenticatedUser authenticatedUser) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("User not found with username " + username));
         UserProfile userProfile = userProfileRepository.findByUser_UserId(user.getUserId()).orElseThrow(() -> new IllegalArgumentException("profile not found"));
+
+        boolean isOwner = authenticatedUser != null
+                && Objects.equals(
+                authenticatedUser.getUsername(),
+                user.getUsername()
+        );
 
         return new UserProfileResponse(
                 user.getFullName(),
                 user.getUsername(),
+                user.getEmail(),
                 userProfile.getProfileId(),
                 userProfile.getHeadline(),
                 userProfile.getBio(),
@@ -121,7 +133,7 @@ public class UserProfileService {
                 userProfile.getCurrentCompany(),
                 userProfile.getCurrentRole(),
                 userProfile.getWebsite(),
-                false
+                isOwner
         );
     }
 }

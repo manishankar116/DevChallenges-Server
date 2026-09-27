@@ -38,13 +38,15 @@ public class UserProfileController {
     }
 
     @GetMapping("/profile-data/{username}")
-    public UserProfileResponse getProfileByUsername(@PathVariable String username){
-        return userProfileService.getProfileByUsername(username);
+    public UserProfileResponse getProfileByUsername(@PathVariable String username,
+                                                    @AuthenticationPrincipal AuthenticatedUser authenticatedUser){
+        return userProfileService.getProfileByUsername(username, authenticatedUser);
     }
 
-    @PatchMapping("/update/{profileId}")
-    public UserProfileResponse updateUserProfileById(@PathVariable UUID profileId, @RequestBody UserProfileRequest userProfileRequest){
-        return userProfileService.updateUserProfileById(profileId, userProfileRequest);
+    @PatchMapping("/update-profile")
+    public UserProfileResponse updateUserProfileById(@RequestBody UserProfileRequest userProfileRequest,
+                                                     @AuthenticationPrincipal AuthenticatedUser authenticatedUser){
+        return userProfileService.updateUserProfileById(userProfileRequest, authenticatedUser);
     }
 
     @PostMapping("/create-profile")

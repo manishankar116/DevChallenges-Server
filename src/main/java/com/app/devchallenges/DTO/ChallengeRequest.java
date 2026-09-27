@@ -1,12 +1,14 @@
 package com.app.devchallenges.DTO;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.UUID;
 
 public record ChallengeRequest(
+
+        UUID challengeId,
+
         @NotBlank(message = "Title is required")
         String title,
 

@@ -51,13 +51,11 @@ public class ChallengeController {
         return ResponseEntity.ok(challengeService.getChallengesByUsername(username));
     }
 
-    @PatchMapping("/update/{id}")
+    @PatchMapping("/update-challenge")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ChallengeResponse> updateChallenge(
-            @PathVariable UUID id,
-            @RequestBody ChallengeRequest request) {
-
-        ChallengeResponse response = challengeService.updateChallenge(id, request);
+    public ResponseEntity<ChallengeResponse> updateChallenge(@RequestBody ChallengeRequest request,
+                                                             @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+        ChallengeResponse response = challengeService.updateChallenge(request, authenticatedUser);
         return ResponseEntity.ok(response);
     }
 
