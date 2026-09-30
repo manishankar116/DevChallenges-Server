@@ -53,9 +53,10 @@ public class ChallengeController {
         return ResponseEntity.ok(challengeService.getChallengesByUsername(username));
     }
 
-    @GetMapping("/get-challenge-stats/{username}")
-    public ResponseEntity<ChallengeStatsResponse> getChallengeStatsByUsername(@PathVariable String username) {
-        return ResponseEntity.ok(challengeService.getChallengeStatsByUsername(username));
+    @GetMapping("/get-user-stats/{username}")
+    public ResponseEntity<ChallengeStatsResponse> getChallengeStatsByUsername(@PathVariable String username,
+                                                                              @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
+        return ResponseEntity.ok(challengeService.getChallengeStatsByUsername(username, authenticatedUser));
     }
 
     @PatchMapping("/update-challenge")

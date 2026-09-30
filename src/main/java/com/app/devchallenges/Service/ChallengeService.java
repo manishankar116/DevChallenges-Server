@@ -85,7 +85,8 @@ public class ChallengeService {
                  .toList();
     }
 
-    public ChallengeStatsResponse getChallengeStatsByUsername(String username) {
+    public ChallengeStatsResponse getChallengeStatsByUsername(String username, AuthenticatedUser authenticatedUser) {
+        if(authenticatedUser == null) throw new IllegalArgumentException("User must be authenticated");
         List<Challenge> challenges = challengeRepository.findByUserUsername(username);
         Set<String> uniqueTags = challenges.stream()
                 .map(Challenge::getEnvironment)

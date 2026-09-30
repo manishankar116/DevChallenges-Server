@@ -42,7 +42,6 @@ public class SecurityConfig {
                                 "/api/auth/register",
                                 "/api/auth/login",
                                 "/api/challenge/get-challenges-by-user/*",
-                                "/api/challenge/get-challenge-stats/*",
                                 "/api/user-profile/profile-data/*"
                         )
                         .permitAll()
