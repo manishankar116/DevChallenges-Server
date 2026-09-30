@@ -23,4 +23,12 @@ public interface ChallengeViewRepository
     WHERE c.user.userId = :userId
     """)
     long countViewsReceivedByUser(@Param("userId") UUID userId);
+
+    @Query("""
+    SELECT COUNT(cv)
+    FROM ChallengeView cv
+    JOIN Challenge c ON c.challengeId = cv.challengeId
+    WHERE c.user.username = :username
+    """)
+    long countViewsReceivedByUsername(@Param("username") String username);
 }

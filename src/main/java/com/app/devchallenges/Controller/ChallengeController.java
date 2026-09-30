@@ -2,6 +2,7 @@ package com.app.devchallenges.Controller;
 
 import com.app.devchallenges.DTO.ChallengeRequest;
 import com.app.devchallenges.DTO.ChallengeResponse;
+import com.app.devchallenges.DTO.ChallengeStatsResponse;
 import com.app.devchallenges.Security.AuthenticatedUser;
 import com.app.devchallenges.Security.JwtService;
 import com.app.devchallenges.Service.ChallengeService;
@@ -35,8 +36,9 @@ public class ChallengeController {
     }
 
     @GetMapping("/get-challenge/{id}")
-    public ResponseEntity<ChallengeResponse> getChallengeById(@PathVariable UUID id){
-        return ResponseEntity.ok(challengeService.getChallengeById(id));
+    public ResponseEntity<ChallengeResponse> getChallengeById(@PathVariable UUID id,
+                                                              @AuthenticationPrincipal AuthenticatedUser authenticatedUser){
+        return ResponseEntity.ok(challengeService.getChallengeById(id, authenticatedUser));
     }
 
     @GetMapping("/get-challenges-by-user")
@@ -49,6 +51,11 @@ public class ChallengeController {
     @GetMapping("/get-challenges-by-user/{username}")
     public ResponseEntity<List<ChallengeResponse>> getChallengesByUsername(@PathVariable String username){
         return ResponseEntity.ok(challengeService.getChallengesByUsername(username));
+    }
+
+    @GetMapping("/get-challenge-stats/{username}")
+    public ResponseEntity<ChallengeStatsResponse> getChallengeStatsByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(challengeService.getChallengeStatsByUsername(username));
     }
 
     @PatchMapping("/update-challenge")

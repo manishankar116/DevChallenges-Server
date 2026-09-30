@@ -2,9 +2,11 @@ package com.app.devchallenges.Service;
 
 import com.app.devchallenges.DTO.ChallengeRequest;
 import com.app.devchallenges.DTO.ChallengeResponse;
+import com.app.devchallenges.DTO.ChallengeStatsResponse;
 import com.app.devchallenges.Entity.Challenge;
 import com.app.devchallenges.Entity.User;
 import com.app.devchallenges.Repository.ChallengeRepository;
+import com.app.devchallenges.Repository.ChallengeViewRepository;
 import com.app.devchallenges.Repository.UserRepository;
 import com.app.devchallenges.Security.AuthenticatedUser;
 import jakarta.transaction.Transactional;
@@ -15,16 +17,23 @@ import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ChallengeService {
 
     private final ChallengeRepository challengeRepository;
+    private final ChallengeViewRepository challengeViewRepository;
     private final UserRepository userRepository;
 
-    public ChallengeService(ChallengeRepository challengeRepository, UserRepository userRepository) {
+    public ChallengeService(ChallengeRepository challengeRepository,
+                            ChallengeViewRepository challengeViewRepository,
+                            UserRepository userRepository) {
         this.challengeRepository = challengeRepository;
+        this.challengeViewRepository = challengeViewRepository;
         this.userRepository = userRepository;
     }
 
@@ -59,8 +68,9 @@ public class ChallengeService {
 
     }
 
-    public ChallengeResponse getChallengeById(UUID id) {
+    public ChallengeResponse getChallengeById(UUID id, AuthenticatedUser authenticatedUser) {
 
+        if(authenticatedUser == null) throw new IllegalArgumentException("User must be authenticated");
         Challenge challenge = challengeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Challenge not found with ID: " + id));
 
@@ -73,6 +83,22 @@ public class ChallengeService {
                  .sorted(Comparator.comparing(Challenge::getCreatedAt))
                  .map(ChallengeResponse::from)
                  .toList();
+    }
+
+    public ChallengeStatsResponse getChallengeStatsByUsername(String username) {
+        List<Challenge> challenges = challengeRepository.findByUserUsername(username);
+        Set<String> uniqueTags = challenges.stream()
+                .map(Challenge::getEnvironment)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        return new ChallengeStatsResponse(
+                challenges.size(),
+                challengeViewRepository.countViewsReceivedByUsername(username),
+                uniqueTags.size()
+        );
     }
 
 
