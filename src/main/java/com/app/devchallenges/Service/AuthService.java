@@ -50,6 +50,10 @@ public class AuthService {
         return new AuthResponse(token, savedUser.getUsername());
     }
 
+    public boolean isUsernameAvailable(String username) {
+        return !userRepository.existsByUsername(username);
+    }
+
     public AuthResponse authenticate(AuthRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -59,6 +63,7 @@ public class AuthService {
         );
 
         User user = userRepository.findByUsername(request.getUsername())
+                .or(() -> userRepository.findByEmail(request.getUsername()))
                 .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());

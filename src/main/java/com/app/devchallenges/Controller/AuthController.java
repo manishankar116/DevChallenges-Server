@@ -29,6 +29,11 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
     }
 
+    @GetMapping("/username-availability")
+    public Map<String, Boolean> checkUsernameAvailability(@RequestParam String username) {
+        return Map.of("available", authService.isUsernameAvailable(username));
+    }
+
     @PostMapping("/admin/provision")
     public ResponseEntity<AuthResponse> provisionUser(@RequestBody RegisterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.provisionUser(request));
