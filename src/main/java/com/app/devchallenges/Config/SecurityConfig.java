@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/register",
+                                "/api/auth/username-availability",
                                 "/api/auth/login",
                                 "/api/challenge/get-challenges-by-user/*",
                                 "/api/user-profile/profile-data/*"
