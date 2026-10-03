@@ -64,6 +64,7 @@ public class AuthService {
         );
 
         User user = userRepository.findByUsername(request.getUsername())
+                .or(() -> userRepository.findByEmail(request.getUsername()))
                 .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
