@@ -1,10 +1,13 @@
 package com.app.devchallenges.Controller;
 
+    import com.app.devchallenges.DTO.ProfileImageData;
 import com.app.devchallenges.DTO.UserProfileRequest;
 import com.app.devchallenges.DTO.UserProfileResponse;
 import com.app.devchallenges.Entity.User;
 import com.app.devchallenges.Security.AuthenticatedUser;
 import com.app.devchallenges.Service.UserProfileService;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -43,10 +46,19 @@ public class UserProfileController {
         return userProfileService.getProfileByUsername(username, authenticatedUser);
     }
 
-    @PatchMapping("/update-profile")
-    public UserProfileResponse updateUserProfileById(@RequestBody UserProfileRequest userProfileRequest,
-                                                     @AuthenticationPrincipal AuthenticatedUser authenticatedUser){
+    @PatchMapping(value = "/update-profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("isAuthenticated()")
+    public UserProfileResponse updateUserProfileById(@ModelAttribute UserProfileRequest userProfileRequest,
+                                                     @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
         return userProfileService.updateUserProfileById(userProfileRequest, authenticatedUser);
+    }
+
+    @GetMapping("/profile-image/{userId}")
+    public ResponseEntity<byte[]> getProfileImage(@PathVariable UUID userId) {
+        ProfileImageData profileImage = userProfileService.getProfileImage(userId);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(profileImage.contentType()))
+                .body(profileImage.data());
     }
 
     @PostMapping("/create-profile")

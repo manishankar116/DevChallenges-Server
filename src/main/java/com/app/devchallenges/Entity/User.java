@@ -48,6 +48,9 @@ public class User {
     @Lob
     private byte[] profileImageData;
 
+    @Column(name = "profile_image_content_type", length = 50)
+    private String profileImageContentType;
+
     @Column(length = 160)
     private String passwordHash;
 

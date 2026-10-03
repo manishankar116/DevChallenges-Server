@@ -13,5 +13,6 @@ public record UserProfileResponse(
         String currentCompany,
         String currentRole,
         String website,
+        String profileImageUrl,
         boolean isOwner
 ) {}
