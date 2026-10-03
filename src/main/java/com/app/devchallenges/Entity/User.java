@@ -44,8 +44,7 @@ public class User {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
-    @Column(name = "profile_image_data")
-    @Lob
+    @Column(name = "profile_image_data", columnDefinition = "bytea")
     private byte[] profileImageData;
 
     @Column(name = "profile_image_content_type", length = 50)
