@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:5173")
@@ -29,9 +30,9 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
     }
 
-    @GetMapping("/username-availability")
-    public Map<String, Boolean> checkUsernameAvailability(@RequestParam String username) {
-        return Map.of("available", authService.isUsernameAvailable(username));
+    @GetMapping("/usernames")
+    public List<String> getAllUsernames() {
+        return authService.getAllUsernames();
     }
 
     @PostMapping("/admin/provision")

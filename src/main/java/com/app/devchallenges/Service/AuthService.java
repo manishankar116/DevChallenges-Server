@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -50,8 +51,8 @@ public class AuthService {
         return new AuthResponse(token, savedUser.getUsername());
     }
 
-    public boolean isUsernameAvailable(String username) {
-        return !userRepository.existsByUsername(username);
+    public List<String> getAllUsernames() {
+        return userRepository.findAllUsernames();
     }
 
     public AuthResponse authenticate(AuthRequest request) {
