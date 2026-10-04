@@ -43,7 +43,7 @@ public class OAuth2AuthenticationSuccessHandler
         String username = user.getUsername();
 
         response.sendRedirect(
-                "http://localhost:5173/oauth2/success"
+                "https://devchallenges.in/oauth2/success"
                         + "?token=" + token
                         + "&username=" + username
         );
